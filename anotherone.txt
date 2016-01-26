@@ -1,0 +1,6 @@
+“”;skdjfioajsdf
+    sed -i -"" "s/\"CHANNEL\": .*$/\"CHANNEL\": \"${CHANNEL}\"/g" package.json
+oio
+sed -i alsdkjfa;fd
+laskdjf"sjlkdjf"slkdfjNone
+    sdfsesed -i -"" "s/\"CHANNEL\": .*$/\"CHANNEL\": \"${CHANNEL}\"/g" package.json

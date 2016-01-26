@@ -1,0 +1,139 @@
+---
+- hosts: local
+  remote_user: richard
+
+  tasks: 
+  # - name: modefy the file test
+  #   lineinfile: 
+  #        dest: /Users/richard/Downloads/Github/studytest/anotherone.txt 
+  #        line: weizejie shi ge da
+
+   # - name: modify the file test
+   #   replace: 
+   #        dest: /Users/richard/Downloads/Github/Arkenstone-App/build_apks.sh
+   #        regexp: \s\"\"
+   #        replace: ""
+
+   # - name: modify the update function
+   #   replace:
+   #          dest: /Users/richard/Downloads/Github/Arkenstone-App/build_apks.sh
+   #          regexp: check_awscli\s
+   #          replace: "#check_awscli\n"
+
+     - name: modify the update function
+       replace:
+              dest: /Users/richard/Downloads/Github/Arkenstone-App/build_apks.sh
+              regexp: upload\s
+              replace: "#upload"
+
+
+  # - name: modefy the file not a line 
+  #   blockinfile:
+  #        dest: /Users/richard/Downloads/Github/studytest/anotherone.txt
+  #        marker: 
+  #        insertafter: weizejie shi ge da
+  #        content: maoxian
+
+  # - name: add 163 source to speed up apt-get
+  #   copy:
+  #        src: /Users/richard/Downloads/Github/studytest/sources.list
+  #        dest: /Users/richard/Downloads/Github/sources.list
+
+  # - name: fetch latest code
+  #   git: 
+  #       repo: ssh://git@github.com/octantis/Arkenstone-App.git
+  #       dest: /home/ubuntu/Arkenstone-App
+  #       recursive: yes
+  #       force: no
+
+  # - name: running the command of android
+  #   shell: ls
+  #   args:
+  #       chdir: /Users/richard/Downloads/Github/
+
+  # - name: echo the path
+  #   shell: echo $PATH
+  #   register: path
+
+  #- name: set github deploy key permission
+  #  template: 
+  #        src: "{{ item }}"
+  #        dest: /Users/richard/Downloads/Github/ 
+  #        mode: 0600
+  #  with_fileglob:
+  #      - "/Users/richard/Downloads/Github/studytest/github/*"
+
+  # - name: fetch latest code
+  #   git: 
+  #       repo: ssh://git@github.com/octantis/Arkenstone-App.git
+  #       dest: /home/ubuntu/Arkenstone-App
+  #       recursive: yes
+  #       #key_file: /Users/richard/.ssh/id_rsa_ocatantis-arkentone 
+  #       #accept_hostkey: yes
+  #       force: no
+
+  # - name: fetch latest code
+  #   git: 
+  #        repo: ssh://git@github.com/octantis/Arkenstone
+  #        dest: /Users/richard/Downloads/test
+  #        key_file: /Users/richard/Downloads/Github/id_rsa.arkenstone 
+  #        recursive: no 
+  #        accept_hostkey: yes
+  #        force: no
+  #        sudo: no
+
+
+  # - name: unarchive a package
+  #   unarchive: 
+  #         src: /Users/richard/Downloads/MSO15.11.zip
+  #         copy: no
+  #         dest: /Users/richard/Downloads/
+
+  # - name: unarchive a package from http
+  #   unarchive:
+  #           src: http://dl.google.com/android/android-sdk_r24.4.1-linux.tgz
+  #           copy: no
+  #           dest: /Users/richard/Downloads/
+
+  # - debug: msg="{{ path.stdout }}"
+
+  # - name: modify the buildapk.sh
+  #   replace: 
+  #         dest: /home/ubuntu/Arkenstone-App/build_apks.sh
+  #         regexp: \s\"\"
+  #         replace: "" 
+
+  # - name: download and unarchive the sdk packages
+  #   unarchive:
+  #           src: http://dl.google.com/android/android-sdk_r24.4.1-linux.tgz
+  #           copy: no
+  #           dest: /home/ubuntu/
+
+  # - name: running the command of android
+  #   shell: tools/android -v list sdk
+  #   args: 
+  #       chdir: /home/ubuntu/android-sdk-linux/
+
+  # - name: running the command of android
+  #   shell: echo y | tools/android -v update sdk -t 1,2,3,5,16,27,43 -u 
+  #   args:
+  #       chdir: /home/ubuntu/android-sdk-linux/
+
+
+# - hosts: test
+#   sudo: yes
+#   environment: 
+#       ANDROID_HOME: /home/ubuntu/android-sdk-linux/
+#       PATH: /home/ubuntu/android-sdk-linux/tools/:/home/ubuntu/android-sdk-linux//platform-tools/:/home/ubuntu/android-sdk-linux/build-tools/23.0.2/:{{ ansible_env.PATH }}
+
+#   tasks:
+#   - name: echo the path
+#     shell: echo "$ANDROID_HOME"
+#     register: path
+
+#   - name: running npm and bower install
+#     shell: npm install && bower install
+#     args:    
+#         chdir: /home/ubuntu/Arkenstone-App
+
+#   - debug: msg="{{ path.stdout }}"

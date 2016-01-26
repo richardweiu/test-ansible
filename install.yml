@@ -1,0 +1,175 @@
+---
+- hosts: test
+  sudo: yes
+  vars: 
+     apt_packages: 
+      - nginx
+      - nodejs
+      - git
+      - oracle-java8-installer
+      - libc6-i386
+      - lib32stdc++6
+      - lib32gcc1
+      - lib32ncurses5
+      - lib32z1
+      - python-pip
+
+
+     add_pparepo:
+      - ppa:chris-lea/node.js
+      - ppa:webupd8team/java
+
+     npm_packages:
+      - ionic
+      - cordova
+      - gulp
+      - bower
+
+  tasks: 
+  - name: add 163 source to speed up apt-get
+    copy:
+         src: /Users/richard/Downloads/Github/studytest/sources.list
+         dest: /etc/apt/sources.list
+
+  - name: add the java and nodejs repository
+    apt_repository: 
+         repo: "{{ item }}"
+         update_cache: yes
+    with_items: add_pparepo
+
+  - name: update packages to latest version
+    apt: 
+         upgrade: dist
+         update_cache: yes
+
+  - name: Select java license
+    shell: echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
+
+  - name: Install required apt packages
+    apt: 
+         name: item
+    with_items: apt_packages
+
+  - name: use pip install awscli
+    pip: 
+         name: awscli
+         state: latest
+
+  - name: check the nodejs is installed
+    shell: nodejs -v
+    register: nodejs
+
+  - name: modefy the hosts file 
+    blockinfile:
+         dest: /etc/hosts 
+         marker: ""
+         block: |
+             216.239.38.125  dl-ssl.google.com
+             216.239.38.125  dl.google.com
+             104.25.173.23   services.gradle.org
+
+  - name: restart the networking for hosts 
+    service:
+         name: networking
+         state: restarted
+
+  - name: use npm to install packages
+    npm:
+         name: "{{ item }}"
+         global: yes
+         state: present
+    with_items: npm_packages
+
+  - name: fetch latest code
+    git: 
+         repo: ssh://git@github.com/octantis/Arkenstone-App.git
+         dest: /home/ubuntu/Arkenstone-App
+         recursive: yes
+         accept_hostkey: yes
+         force: no
+    sudo: no 
+
+  # - name: download the file of the sdk 
+  #   get_url:
+  #        url: http://dl.google.com/android/android-sdk_r24.4.1-linux.tgz
+  #        dest: /home/ubuntu/
+
+  # - name: tar my sdk 
+  #     shell: tar -xzvf android-sdk_r24.4.1-linux.tgz
+
+  - name: download and unarchive the sdk packages
+    unarchive:
+            src: http://dl.google.com/android/android-sdk_r24.4.1-linux.tgz
+            copy: no
+            dest: /home/ubuntu/
+
+  - name: use android tool to get the update sdk list 
+    shell: tools/android -v list sdk
+    args: 
+        chdir: /home/ubuntu/android-sdk-linux/
+
+  - name: use android tool to update sdk
+    shell: echo y | tools/android -v update sdk -t 1,2,3,5,16,27,43 -u 
+    args:
+        chdir: /home/ubuntu/android-sdk-linux/
+    register: android-update
+    #failed_when: "'7' not in cmd_result.stdout"
+  # - debug: msg={{ android-update }}
+
+
+- hosts: test
+  sudo: yes
+  environment: 
+      ANDROID_HOME: /home/ubuntu/android-sdk-linux/
+      PATH: /home/ubuntu/android-sdk-linux/tools/:/home/ubuntu/android-sdk-linux//platform-tools/:/home/ubuntu/android-sdk-linux/build-tools/23.0.2/:{{ ansible_env.PATH }}
+
+  tasks:
+  # - name: get yes for github ssh
+  #   shell: echo yes | ssh -T git@github
+  #   ignore_errors: yes
+
+  # - name: fetch latest code by git command
+  #   shell: git clone --recursive ssh://git@github.com/octantis/Arkenstone-App.git 
+  #   args:
+  #       chdir: /home/ubuntu
+
+  - name: modify the buildapk.sh delete "" behind sed
+    replace: 
+          dest: /home/ubuntu/Arkenstone-App/build_apks.sh
+          regexp: \s\"\"
+          replace: "" 
+
+  - name:  add annotation string for the check_awscli
+    replace:
+          dest: /home/ubuntu/Arkenstone-App/build_apks.sh
+          regexp: check_awscli\s
+          replace: "#check_awscli\n"
+
+  - name: add annotation string for the upload 
+    replace:
+           dest: /home/ubuntu/Arkenstone-App/build_apks.sh
+           regexp: upload\s
+           replace: "#upload"
+
+
+  - name: echo the path
+    shell: echo $PATH
+    register: path
+
+  - name: running npm install
+    shell: npm install
+    args:    
+        chdir: /home/ubuntu/Arkenstone-App
+
+  - name: running bower install
+    shell: bower install
+    args:    
+        chdir: /home/ubuntu/Arkenstone-App
+    sudo: no
+
+  - name: begin to pack the apk 
+    shell: KEYSTORE_PASS=AotAn123 bash -x build_apks.sh Arkenstone 0.0.1
+    args:
+        chdir: /home/ubuntu/Arkenstone-App
+
+  - debug: msg="{{ path.stdout }}"
