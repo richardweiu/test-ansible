@@ -168,7 +168,7 @@
     sudo: no
 
   - name: begin to pack the apk 
-    shell: KEYSTORE_PASS=AotAn123 bash -x build_apks.sh Arkenstone 0.0.1
+    shell: 
     args:
         chdir: /home/ubuntu/Arkenstone-App
 
