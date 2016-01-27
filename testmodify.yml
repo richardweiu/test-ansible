@@ -20,11 +20,27 @@
    #          regexp: check_awscli\s
    #          replace: "#check_awscli\n"
 
-     - name: modify the update function
-       replace:
-              dest: /Users/richard/Downloads/Github/Arkenstone-App/build_apks.sh
-              regexp: upload\s
-              replace: "#upload"
+     # - name: modify the update function
+     #   replace:
+     #          dest: /Users/richard/Downloads/Github/Arkenstone-App/build_apks.sh
+     #          regexp: upload\s
+     #          replace: "#upload"
+  # - name: config the aws access s3 id and key
+  #   copy: 
+  #        src: /Users/richard/Downloads/Github/test-ansible/.aws
+  #        #dest: /home/ubuntu/
+  #        dest: /Users/richard/Downloads/Github/
+  #        owner: ubuntu
+   - name:  modify the ionic dev to prod
+     replace:
+           dest: /Users/richard/Downloads/Github/Arkenstone-App/ionic.project
+           regexp: dev
+           replace: "prod"
+   - name:  modify the ionic dev to prod
+     replace:
+           dest: /Users/richard/Downloads/Github/Arkenstone-App/ionic.project
+           regexp: false
+           replace: "true"
 
 
   # - name: modefy the file not a line 
