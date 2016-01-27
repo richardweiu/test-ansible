@@ -28,7 +28,7 @@
   tasks: 
   - name: add 163 source to speed up apt-get
     copy:
-         src: /Users/richard/Downloads/Github/studytest/sources.list
+         src: /Users/richard/Downloads/Github/test-ansible/sources.list
          dest: /etc/apt/sources.list
 
   - name: add the java and nodejs repository
@@ -103,6 +103,7 @@
             copy: no
             dest: /home/ubuntu/
             owner: ubuntu
+            group: ubuntu
 
   - name: use android tool to get the update sdk list 
     shell: tools/android -v list sdk
@@ -151,18 +152,30 @@
            dest: /home/ubuntu/Arkenstone-App/build_apks.sh
            regexp: aws configure\s
            replace: "#aws configure"
-#just for testing at local
-  # - name:  add annotation string for the check_awscli
-  #   replace:
-  #         dest: /home/ubuntu/Arkenstone-App/build_apks.sh
-  #         regexp: check_awscli\s
-  #         replace: "#check_awscli\n"
 
-  # - name: add annotation string for the upload 
-  #   replace:
-  #          dest: /home/ubuntu/Arkenstone-App/build_apks.sh
-  #          regexp: upload\s
-  #          replace: "#upload"
+  - name:  modify the ionic dev to prod
+    replace:
+           dest: /home/ubuntu/Arkenstone-App/ionic.project
+           regexp: dev
+           replace: "prod"
+
+  - name:  modify the ionic false to true
+    replace:
+           dest: /home/ubuntu/Arkenstone-App/ionic.project
+           regexp: dev
+           replace: "prod"
+#just for testing at local
+  - name:  add annotation string for the check_awscli
+    replace:
+          dest: /home/ubuntu/Arkenstone-App/build_apks.sh
+          regexp: check_awscli\s
+          replace: "#check_awscli\n"
+
+  - name: add annotation string for the upload 
+    replace:
+           dest: /home/ubuntu/Arkenstone-App/build_apks.sh
+           regexp: upload\s
+           replace: "#upload"
 
 
   - name: echo the path
@@ -180,9 +193,20 @@
         chdir: /home/ubuntu/Arkenstone-App
     sudo: no
 
-  - name: begin to pack the apk 
-    shell: 
-    args:
-        chdir: /home/ubuntu/Arkenstone-App
+   - name: running ionic init sass
+     shell: ionic setup sass
+     args:    
+         chdir: /home/ubuntu/Arkenstone-App
+     ignore_errors: yes
 
-  - debug: msg="{{ path.stdout }}"
+   - name: running the ionic serve
+     shell: ionic serve
+     args:
+         chdir: /home/ubuntu/Arkenstone-App
+
+   - name: begin to pack the apk 
+     shell: 
+     args:
+         chdir: /home/ubuntu/Arkenstone-App
+
+  # - debug: msg="{{ path.stdout }}"
