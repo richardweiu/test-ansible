@@ -28,7 +28,7 @@
   tasks: 
   - name: add 163 source to speed up apt-get
     copy:
-         src: /Users/richard/Downloads/Github/test-ansible/sources.list
+         src: /Users/richard/Downloads/Github/test-ansible/test-ansible/sources.list
          dest: /etc/apt/sources.list
 
   - name: add the java and nodejs repository
@@ -58,14 +58,14 @@
   - name: check the nodejs is installed
     shell: nodejs -v
     register: nodejs
-
+##hosts need modify frequently
   - name: modefy the hosts file 
     blockinfile:
          dest: /etc/hosts 
          marker: ""
          block: |
-             216.239.38.125  dl-ssl.google.com
-             216.239.38.125  dl.google.com
+             203.208.48.154  dl-ssl.google.com
+             203.208.48.154  dl.google.com
              104.25.173.23   services.gradle.org
 
   - name: restart the networking for hosts 
@@ -78,8 +78,9 @@
          name: "{{ item }}"
          global: yes
          state: present
+         registry: https://registry.npm.taobao.org 
     with_items: npm_packages
-
+#when you git the code by forward ssh,must pay attention ,sudo no
   - name: fetch latest code
     git: 
          repo: ssh://git@github.com/octantis/Arkenstone-App.git
@@ -88,14 +89,6 @@
          accept_hostkey: yes
          force: no
     sudo: no 
-
-  # - name: download the file of the sdk 
-  #   get_url:
-  #        url: http://dl.google.com/android/android-sdk_r24.4.1-linux.tgz
-  #        dest: /home/ubuntu/
-
-  # - name: tar my sdk 
-  #     shell: tar -xzvf android-sdk_r24.4.1-linux.tgz
 
   - name: download and unarchive the sdk packages
     unarchive:
@@ -126,17 +119,9 @@
       PATH: /home/ubuntu/android-sdk-linux/tools/:/home/ubuntu/android-sdk-linux//platform-tools/:/home/ubuntu/android-sdk-linux/build-tools/23.0.2/:{{ ansible_env.PATH }}
 
   tasks:
-  # - name: get yes for github ssh
-  #   shell: echo yes | ssh -T git@github
-  #   ignore_errors: yes
-
-  # - name: fetch latest code by git command
-  #   shell: git clone --recursive ssh://git@github.com/octantis/Arkenstone-App.git 
-  #   args:
-  #       chdir: /home/ubuntu
   - name: config the aws access s3 id and key
     copy: 
-         src: /Users/richard/Downloads/Github/test-ansible/.aws
+         src: /Users/richard/Downloads/Github/test-ansible/test-ansible/.aws
          #dest: /home/ubuntu/
          dest: /Users/richard/Downloads/Github/
          owner: ubuntu
@@ -162,8 +147,8 @@
   - name:  modify the ionic false to true
     replace:
            dest: /home/ubuntu/Arkenstone-App/ionic.project
-           regexp: dev
-           replace: "prod"
+           regexp: \sfalse
+           replace: " true"
 #just for testing at local
   - name:  add annotation string for the check_awscli
     replace:
@@ -171,11 +156,11 @@
           regexp: check_awscli\s
           replace: "#check_awscli\n"
 
-  - name: add annotation string for the upload 
-    replace:
-           dest: /home/ubuntu/Arkenstone-App/build_apks.sh
-           regexp: upload\s
-           replace: "#upload"
+  # - name: add annotation string for the upload 
+  #   replace:
+  #          dest: /home/ubuntu/Arkenstone-App/build_apks.sh
+  #          regexp: upload\s
+  #          replace: "#upload"
 
 
   - name: echo the path
@@ -193,20 +178,18 @@
         chdir: /home/ubuntu/Arkenstone-App
     sudo: no
 
-   - name: running ionic init sass
-     shell: ionic setup sass
-     args:    
+  - name: running ionic init sass
+    shell: ionic setup sass
+    args:    
          chdir: /home/ubuntu/Arkenstone-App
-     ignore_errors: yes
+    ignore_errors: yes
 
-   - name: running the ionic serve
-     shell: ionic serve
-     args:
-         chdir: /home/ubuntu/Arkenstone-App
-
-   - name: begin to pack the apk 
-     shell: 
-     args:
+  - name: running the ionic serve
+    shell: ionic serve
+    args:
          chdir: /home/ubuntu/Arkenstone-App
 
-  # - debug: msg="{{ path.stdout }}"
+  - name: begin to pack the apk 
+    shell: 
+    args:
+         chdir: /home/ubuntu/Arkenstone-App
