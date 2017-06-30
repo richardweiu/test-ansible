@@ -1,0 +1,38 @@
+pipeline {
+    agent {
+        node {
+            label 'staging' 
+        }
+    }
+    stages {
+        stage('pull source code ') {
+            steps {
+                git url: 'https://github.com/richardweiu/test-ansible.git', branch: 'master', credentialsId: '87b8a1c1-a1f8-491c-8dd6-a974a68d6edf'
+            }
+        }
+        
+        stage('test'){
+            steps{
+                sh 'pwd'
+            }
+        }
+
+    }
+    
+    post {
+        success {
+            emailext body: 
+                '''
+                ${SCRIPT, template="build-test.template"}''',
+                subject: "Job '${env.JOB_NAME}' (${env.BUILD_NUMBER}) is success :)",
+                to: "weizj@simplecloud.cn"
+        }
+        failure {
+            emailext body: 
+                '''
+                ${SCRIPT, template="build-test.template"}''',
+                subject: "Job '${env.JOB_NAME}' (${env.BUILD_NUMBER}) is failed :(",
+                to: "weizj@simplecloud.cn"
+        }
+    }
+}
